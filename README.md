@@ -1,1 +1,1 @@
-# stis-ccd-pixeldb
+# STIS CCD Pixel Annealing Database
