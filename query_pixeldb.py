@@ -8,7 +8,7 @@ class PixelDB:
         self.db = mysql.connector.connect(host=host,user=user,password=password)
         self.cursor = self.db.cursor()
 
-    def query_pixel(self,pixel_row,pixel_col,date=None,anneal_num=None):
+    def query_pixel(self,pixel_row,pixel_col,date=None,anneal_num=None,instrument='STIS',detector='CCD'):
         """Return pixel properties for a given pixel and anneal combination"""
         if (not date) and (not anneal_num):
             print("Please provide a date or an anneal number to retrieve pixel properties from.")
@@ -17,7 +17,7 @@ class PixelDB:
         for row in self.cursor:
             print(row)
 
-    def query_anneal(self, date=None, anneal_num=None):
+    def query_anneal(self, date=None, anneal_num=None, instrument='STIS', detector='CCD'):
         """Return anneal properties for a single anneal, probably want to handle querying for multiple anneals at once"""
         if (not date) and (not anneal_num):
             print(
