@@ -16,6 +16,7 @@ class PixelDB:
         self.cursor.execute("[SQL STATEMENT HERE]")
         for row in self.cursor:
             print(row)
+        return
 
     def query_anneal(self, date=None, anneal_num=None, instrument='STIS', detector='CCD'):
         """Return anneal properties for a single anneal, probably want to handle querying for multiple anneals at once"""
@@ -26,3 +27,15 @@ class PixelDB:
         self.cursor.execute("[SQL STATEMENT HERE]")
         for row in self.cursor:
             print(row)
+        return
+
+    def query_anneal_darks(self, date=None, anneal_num=None, instrument='STIS', detector='CCD'):
+        """Return the list of dark names for a given anneal"""
+        if (not date) and (not anneal_num):
+            print(
+                "Please provide a date or an anneal number to identify an anneal to retrieve dark file names from")
+            return
+        self.cursor.execute("[SQL STATEMENT HERE]")
+        for row in self.cursor:
+            print(row)
+        return
