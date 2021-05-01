@@ -12,6 +12,7 @@ setup(
                    'Topic :: Scientific/Engineering :: Astronomy',
                    'Topic :: Scientific/Engineering :: Physics',
                    'Topic :: Software Development :: Libraries :: Python Modules'],
-    packages = find_packages(),
+    package_dir={"": "stispixeldb"},
+    packages=find_packages(where="stispixeldb"),
     install_requires = ['pandas', 'numpy', 'mysql-connector-python'],
     version = 0.0)
