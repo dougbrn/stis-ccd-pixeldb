@@ -70,6 +70,6 @@ class PixelDB:
         return missing_anneals
 
 
-    def insert_anneals(self):
+    def insert_anneal(self):
         """Loads anneals and their corresponding pixels into the database"""
         pass
