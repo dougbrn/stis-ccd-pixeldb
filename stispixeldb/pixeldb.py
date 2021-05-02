@@ -1,6 +1,7 @@
 import mysql.connector
 import pandas as pd
 import numpy as np
+from .utils import get_anneals, date_to_anneal_num
 
 class PixelDB:
     def __init__(self,host,user,password,database):
@@ -15,13 +16,19 @@ class PixelDB:
             result.append(row)
         return result
 
-    def query_pixel(self,pixel_row,pixel_col,date=None,anneal_num=None,instrument='STIS',detector='CCD'):
+    def query_pixel(self,pixel_row,pixel_col,date=None,anneal_num=None):
         """Return pixel properties for a given pixel and anneal combination"""
         if (not date) and (not anneal_num):
-            print("Please provide a date or an anneal number to retrieve pixel properties from.")
+            print("Please provide a date (format YYYY-MM-DD) or an anneal number to retrieve pixel properties from.")
             return
-        result = self.__execute("[SQL STATEMENT HERE]")
-        return
+        elif date and not anneal_num:
+            anneal_num = date_to_anneal_num(date)
+        sql_statement = f"SELECT * FROM HAS_PROPERTIES_IN \
+                        WHERE ROWNUM = {pixel_row} \
+                        AND COLUMNNUM = {pixel_col} \
+                        AND ANNEALNUMBER = {anneal_num}"
+        result = self.__execute(sql_statement)
+        return result
 
     def query_anneal(self, date=None, anneal_num=None, instrument='STIS', detector='CCD'):
         """Return anneal properties for a single anneal, probably want to handle querying for multiple anneals at once"""
@@ -45,11 +52,7 @@ class PixelDB:
         """Returns a list of anneals not contained in the pixel database"""
 
         # Read in the tabulated set of available anneals
-        URL = 'http://www.stsci.edu/~STIS/monitors/anneals/anneal_periods.html'
-        anneal_df = pd.read_html(URL)[0]
-        cols = list(anneal_df.columns)
-        cols[0] = "number"
-        anneal_df.columns = cols
+        anneal_df = get_anneals()
 
         # Query database for the set of stored anneal numbers
         result = self.__execute("SELECT AnnealNumber FROM ANNEAL_PERIODS")
