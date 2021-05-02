@@ -17,6 +17,13 @@ class PixelDB:
             result.append(row)
         return result
 
+    def __batch_execute(self, statement, values):
+        self.cursor.executemany(statement, values)
+        result = []
+        for row in self.cursor:
+            result.append(row)
+        return result
+
     def query_pixel(self,pixel_row,pixel_col,date=None,anneal_num=None):
         """Return pixel properties for a given pixel and anneal combination"""
         if (not date) and (not anneal_num):
@@ -89,7 +96,11 @@ class PixelDB:
         
 
         #Insert Anneal Period
+        #self.db.commit()
 
         #Insert Darks
+        #self.db.commit()
 
         #Insert Pixel Properties
+        #self.db.commit()
+        
