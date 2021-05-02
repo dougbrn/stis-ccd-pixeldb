@@ -2,6 +2,7 @@ import mysql.connector
 import pandas as pd
 import numpy as np
 from .utils import get_anneals, date_to_anneal_num
+import os.path
 
 class PixelDB:
     def __init__(self,host,user,password,database):
@@ -70,6 +71,25 @@ class PixelDB:
         return missing_anneals
 
 
-    def insert_anneal(self):
-        """Loads anneals and their corresponding pixels into the database"""
-        pass
+    def insert_anneal(self, anneal_num, csv_loc = '.'):
+        """Loads anneals and their corresponding pixels and darks into the database"""
+        anneal_df = get_anneals() # Load in the list of available anneals
+        anneal = anneal_df.loc[anneal_df['number']==anneal_num]
+        if len(anneal) == 0:
+            print("No Matching Anneal Period Found.")
+            return
+        
+        # Prepare Pixel File
+        pix_csv = os.path.join(csv_loc,f'anneal_{anneal_num}.csv')
+        
+        # Prepare Darks
+        darks = list(anneal['darks'])[0].split(',')
+        for idx,dark in enumerate(darks):
+            darks[idx] = dark.strip()
+        
+
+        #Insert Anneal Period
+
+        #Insert Darks
+
+        #Insert Pixel Properties
