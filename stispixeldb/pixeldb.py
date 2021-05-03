@@ -89,17 +89,24 @@ class PixelDB:
         # Prepare Pixel File
         pix_csv = os.path.join(csv_loc,f'anneal_{anneal_num}.csv')
         
-        # Prepare Darks
-        darks = list(anneal['darks'])[0].split(',')
-        for idx,dark in enumerate(darks):
-            darks[idx] = dark.strip()
-        
-
         #Insert Anneal Period
-        #self.db.commit()
+        start_date = str(anneal['start']).split(" ")[0]
+        end_date = str(anneal['end']).split(" ")[0]
+        statement = f"INSERT INTO ANNEAL_PERIOD ( AnnealNumber, StartDate, EndDate, NumberOfDarks) \
+                    VALUES ( {int(anneal_num)}, {start_date}, {end_date}, {int(anneal['num'])})"
+        self.__execute(statement)
+        self.db.commit() #Needed for confirming the database-altering transaction
 
         #Insert Darks
-        #self.db.commit()
+        darks = list(anneal['darks'])[0].split(',')
+        dark_vals = []
+        for dark in darks:
+            dark = dark.strip()
+            dark_tup = (dark, anneal_num)
+            dark_vals.append(dark_tup)
+        statement = "INSERT INTO darks ( Darks, AnnealNumber) VALUES (%s, %d)"
+        self.__executemany(statement, dark_vals)
+        self.db.commit()
 
         #Insert Pixel Properties
         #self.db.commit()
