@@ -87,7 +87,12 @@ class PixelDB:
             return
         
         # Prepare Pixel File
-        pix_csv = os.path.join(csv_loc,f'anneal_{anneal_num}.csv')
+        pix_path = os.path.join(csv_loc,f'anneal_{anneal_num}.csv')
+        try:
+            pix_csv = pd.read_csv(pix_path)
+        except FileNotFoundError:
+            print("No Pixel Property CSV file found")
+            return
         
         #Insert Anneal Period
         start_date = str(anneal['start']).split(" ")[0]
@@ -105,9 +110,14 @@ class PixelDB:
             dark_tup = (dark, anneal_num)
             dark_vals.append(dark_tup)
         statement = "INSERT INTO darks ( Darks, AnnealNumber) VALUES (%s, %d)"
-        self.__executemany(statement, dark_vals)
+        self.__batch_execute(statement, dark_vals)
         self.db.commit()
 
         #Insert Pixel Properties
-        #self.db.commit()
+        pix_vals = list(pix_csv.itertuples(index=False, name=None))
+        statement = "INSERT INTO HAS_PROPERTIES_IN ( AnnealNumber, RowNum, ColumnNum, Stability, Sci_Mean, Err_Mean, NaN_Count, Readnoise) \
+                    VALUES (%d,%d,%d,%d,%d,%d,%d,%d)"
+        self.__batch_execute(statement, pix_vals)
+        self.db.commit()
+        return
         
