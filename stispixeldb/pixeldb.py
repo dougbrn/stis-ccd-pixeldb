@@ -62,6 +62,23 @@ class PixelDB:
         result = self.__execute(sql_statement)
         return
 
+    def load_pixel_mapping(self, csv_loc='.',csv_name='pixel_map.csv'):
+        # Prepare Pixel File
+        pix_path = os.path.join(csv_loc,csv_name)
+        try:
+            pix_csv = pd.read_csv(pix_path)
+        except FileNotFoundError:
+            print("No Pixel Mapping CSV file found")
+            return
+
+        #Insert Pixel Properties
+        pix_vals = list(pix_csv.itertuples(index=False, name=None))
+        statement = "INSERT INTO PIXEL ( RowNum,ColumnNum, Detector_Name) \
+                    VALUES (%s,%s,%s)"
+        self.__batch_execute(statement, pix_vals)
+        self.db.commit()
+
+
     def check_for_anneals(self, exclude=[]):
         """Returns a list of anneals not contained in the pixel database"""
 
@@ -69,7 +86,7 @@ class PixelDB:
         anneal_df = get_anneals()
 
         # Query database for the set of stored anneal numbers
-        result = self.__execute("SELECT AnnealNumber FROM ANNEAL_PERIODS")
+        result = self.__execute("SELECT AnnealNumber FROM ANNEAL_PERIOD")
 
         missing_anneals = []
         for anneal in anneal_df['number']:

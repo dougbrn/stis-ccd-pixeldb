@@ -19,14 +19,15 @@ CREATE TABLE INSTRUMENT
 (
 	IName VARCHAR(10) PRIMARY KEY,
 	N_Detectors INT (2),
-	Functioning VARCHAR(8)
+	Functioning TINYINT(1)
 );
 
 CREATE TABLE DETECTOR
 (
 	DName VARCHAR(8) PRIMARY KEY,
-	Annealed CHAR(10),
-	N_Pixels INT(9),
+	Annealed TINYINT(1),
+	N_Rows INT(4),
+    N_Columns INT(4),
 	IName VARCHAR(10),
 	FOREIGN KEY(IName) REFERENCES INSTRUMENT(IName) ON DELETE SET NULL
 );
@@ -55,3 +56,9 @@ CREATE TABLE HAS_PROPERTIES_IN
 	FOREIGN KEY(RowNum, ColumnNum) REFERENCES PIXEL(RowNum, ColumnNum) on delete CASCADE
 
 );
+
+INSERT INTO INSTRUMENT (Iname, N_Detectors, Functioning)
+VALUES ('STIS',3,1);
+
+INSERT INTO DETECTOR (Dname, Annealed, N_Rows, N_Columns, IName)
+VALUES ('CCD',1, 1024, 1024, 'STIS');
