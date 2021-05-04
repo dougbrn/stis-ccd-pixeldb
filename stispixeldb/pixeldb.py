@@ -8,7 +8,7 @@ import datetime
 class PixelDB:
     def __init__(self,host,user,password,database):
         """Define the pixel database connection creates a client connection and a cursor object"""
-        self.db = mysql.connector.connect(host=host,user=user,password=password,database=database)
+        self.db = mysql.connector.connect(host=host,user=user,password=password,database=database,connection_timeout=3600)
         self.cursor = self.db.cursor()
 
     def __execute(self, statement, vals=None):
@@ -67,7 +67,7 @@ class PixelDB:
         # Prepare Pixel File
         pix_path = os.path.join(csv_loc,csv_name)
         try:
-            pix_csv = pd.read_csv(pix_path)
+            pix_csv = pd.read_csv(pix_path,header=None)
         except FileNotFoundError:
             print("No Pixel Mapping CSV file found")
             return
@@ -124,6 +124,7 @@ class PixelDB:
         statement = "INSERT INTO ANNEAL_PERIOD ( AnnealNumber, StartDate, EndDate, NumberOfDarks) VALUES (%s, %s, %s, %s)"
         anneal_vals = (anneal_num, start_date, end_date, int(anneal['num']))
         #self.__execute(statement,anneal_vals)
+
         self.cursor.execute("INSERT INTO ANNEAL_PERIOD ( AnnealNumber, StartDate, EndDate, NumberOfDarks) VALUES (%s, %s, %s, %s)",
                (anneal_num, start_date, end_date, int(anneal['num'])))
         result = []
@@ -132,7 +133,7 @@ class PixelDB:
             result.append(x)
         print(result)
         self.db.commit() #Needed for confirming the database-altering transaction
-
+        
         #Insert Darks
         darks = list(anneal['darks'])[0].split(',')
         dark_vals = []
@@ -145,10 +146,18 @@ class PixelDB:
         self.db.commit()
 
         #Insert Pixel Properties
+        pix_csv.insert(0,'AnnealNumber',anneal_num)
+        pix_csv = pix_csv.fillna(0)
         pix_vals = list(pix_csv.itertuples(index=False, name=None))
-        statement = "INSERT INTO HAS_PROPERTIES_IN ( AnnealNumber, RowNum, ColumnNum, Stability, Sci_Mean, Err_Mean, NaN_Count, Readnoise) \
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        self.__batch_execute(statement, pix_vals)
+        first_half = pix_vals[0:int(len(pix_csv)/2)]
+        second_half = pix_vals[int(len(pix_csv)/2):]
+        print("Starting First Half Insertion")
+        statement = "INSERT INTO HAS_PROPERTIES_IN ( AnnealNumber, RowNum, ColumnNum, Stability, Sci_Mean, Err_Mean, NaN_Count, Readnoise) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        self.__batch_execute(statement, first_half)
+        self.db.commit()
+        print("Starting Second Half Insertion")
+        statement = "INSERT INTO HAS_PROPERTIES_IN ( AnnealNumber, RowNum, ColumnNum, Stability, Sci_Mean, Err_Mean, NaN_Count, Readnoise) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        self.__batch_execute(statement, second_half)
         self.db.commit()
         return
         
