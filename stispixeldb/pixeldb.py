@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from .utils import get_anneals, date_to_anneal_num
 import os.path
+import datetime
 
 class PixelDB:
     def __init__(self,host,user,password,database):
@@ -10,7 +11,7 @@ class PixelDB:
         self.db = mysql.connector.connect(host=host,user=user,password=password,database=database)
         self.cursor = self.db.cursor()
 
-    def __execute(self, statement):
+    def __execute(self, statement, vals=None):
         self.cursor.execute(statement)
         result = []
         for row in self.cursor:
@@ -112,11 +113,24 @@ class PixelDB:
             return
         
         #Insert Anneal Period
-        start_date = str(anneal['start']).split(" ")[0]
-        end_date = str(anneal['end']).split(" ")[0]
-        statement = f"INSERT INTO ANNEAL_PERIOD ( AnnealNumber, StartDate, EndDate, NumberOfDarks) \
-                    VALUES ( {int(anneal_num)}, {start_date}, {end_date}, {int(anneal['num'])})"
-        self.__execute(statement)
+        start_year,start_month,start_day = list(anneal['start'])[0].split(" ")[0].split("-")
+        start_date = datetime.date(int(start_year), int(start_month), int(start_day))
+        start_date.strftime('%Y %m %d')
+
+        end_year,end_month,end_day = list(anneal['end'])[0].split(" ")[0].split("-")
+        end_date = datetime.date(int(end_year), int(end_month), int(end_day))
+        end_date.strftime('%Y %m %d')
+
+        statement = "INSERT INTO ANNEAL_PERIOD ( AnnealNumber, StartDate, EndDate, NumberOfDarks) VALUES (%s, %s, %s, %s)"
+        anneal_vals = (anneal_num, start_date, end_date, int(anneal['num']))
+        #self.__execute(statement,anneal_vals)
+        self.cursor.execute("INSERT INTO ANNEAL_PERIOD ( AnnealNumber, StartDate, EndDate, NumberOfDarks) VALUES (%s, %s, %s, %s)",
+               (anneal_num, start_date, end_date, int(anneal['num'])))
+        result = []
+        for x in self.cursor:
+            print(x)
+            result.append(x)
+        print(result)
         self.db.commit() #Needed for confirming the database-altering transaction
 
         #Insert Darks
@@ -126,14 +140,14 @@ class PixelDB:
             dark = dark.strip()
             dark_tup = (dark, anneal_num)
             dark_vals.append(dark_tup)
-        statement = "INSERT INTO darks ( Darks, AnnealNumber) VALUES (%s, %d)"
+        statement = "INSERT INTO DARKS ( Darks, AnnealNumber) VALUES (%s, %s)"
         self.__batch_execute(statement, dark_vals)
         self.db.commit()
 
         #Insert Pixel Properties
         pix_vals = list(pix_csv.itertuples(index=False, name=None))
         statement = "INSERT INTO HAS_PROPERTIES_IN ( AnnealNumber, RowNum, ColumnNum, Stability, Sci_Mean, Err_Mean, NaN_Count, Readnoise) \
-                    VALUES (%d,%d,%d,%d,%d,%d,%d,%d)"
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         self.__batch_execute(statement, pix_vals)
         self.db.commit()
         return
