@@ -53,6 +53,24 @@ class PixelDB:
         result = self.__execute(sql_statement)
         return pd.DataFrame(result, columns=columns)
 
+    def query_pixel_row_col(self,pixel_row1, pixel_row2, pixel_col1, pixel_col2, date=None,anneal_num=None, columns=['AnnealNumber','RowNum',
+                                                                                'ColumnNum','Stability',
+                                                                                'Sci_Mean','Err_Mean',
+                                                                                'NaN_Count','Readnoise']):
+        """Return pixel properties for a given pixel and anneal combination"""
+        if (not date) and (not anneal_num):
+            print("Please provide a date (format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) or an anneal number to retrieve pixel properties from.")
+            return
+        elif date and not anneal_num:
+            anneal_num = date_to_anneal_num(date)
+        col_string = ','.join(columns)
+        sql_statement = f"SELECT {col_string} FROM HAS_PROPERTIES_IN \
+                        WHERE ( RowNum BETWEEN ({pixel_row1}) AND ({pixel_row2}))\
+                        AND (ColumnNum BETWEEN ({pixel_col1}) AND ({pixel_col2}))\
+                        AND AnnealNumber = {anneal_num}"
+        result = self.__execute(sql_statement)
+        return pd.DataFrame(result, columns=columns)
+
 
     def query_anneal(self, date=None, anneal_num=None, instrument='STIS', detector='CCD', columns=['AnnealNumber', 'StartDate',
                                                                                                     'EndDate','NumberOfDarks']):
