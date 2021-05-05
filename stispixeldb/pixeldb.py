@@ -10,6 +10,7 @@ class PixelDB:
         """Define the pixel database connection creates a client connection and a cursor object"""
         self.db = mysql.connector.connect(host=host,user=user,password=password,database=database,connection_timeout=3600)
         self.cursor = self.db.cursor()
+        self.__prohibited = ["DROP *"]
 
     def __execute(self, statement, vals=None):
         self.cursor.execute(statement)
@@ -25,43 +26,63 @@ class PixelDB:
             result.append(row)
         return result
 
-    def query_pixel(self,pixel_row,pixel_col,date=None,anneal_num=None):
+    def custom_query(self,statement):
+        """execute a general sql query against the database"""
+        if statement in self.__prohibited:
+            print("Cannot execute, statement prohibited.")
+            return
+        else:
+            result = self.__execute(statement)
+            return pd.DataFrame(result)
+
+    def query_pixel(self,pixel_row,pixel_col,date=None,anneal_num=None, columns=['AnnealNumber','RowNum',
+                                                                                'ColumnNum','Stability',
+                                                                                'Sci_Mean','Err_Mean',
+                                                                                'NaN_Count','Readnoise']):
         """Return pixel properties for a given pixel and anneal combination"""
         if (not date) and (not anneal_num):
             print("Please provide a date (format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) or an anneal number to retrieve pixel properties from.")
             return
         elif date and not anneal_num:
             anneal_num = date_to_anneal_num(date)
-        sql_statement = f"SELECT * FROM HAS_PROPERTIES_IN \
-                        WHERE ROWNUM = {pixel_row} \
-                        AND COLUMNNUM = {pixel_col} \
-                        AND ANNEALNUMBER = {anneal_num}"
+        col_string = ','.join(columns)
+        sql_statement = f"SELECT {col_string} FROM HAS_PROPERTIES_IN \
+                        WHERE RowNum = {pixel_row} \
+                        AND ColumnNum = {pixel_col} \
+                        AND AnnealNumber = {anneal_num}"
         result = self.__execute(sql_statement)
-        return result
+        return pd.DataFrame(result, columns=columns)
 
-    def query_anneal(self, date=None, anneal_num=None, instrument='STIS', detector='CCD'):
+
+    def query_anneal(self, date=None, anneal_num=None, instrument='STIS', detector='CCD', columns=['AnnealNumber', 'StartDate',
+                                                                                                    'EndDate','NumberOfDarks']):
         """Return anneal properties for a single anneal, probably want to handle querying for multiple anneals at once"""
         if (not date) and (not anneal_num):
             print("Please provide a date (format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) or an anneal number to retrieve pixel properties from.")
             return
         elif date and not anneal_num:
             anneal_num = date_to_anneal_num(date)
-        sql_statement = f"SELECT * FROM ANNEAL_PERIOD \
+        col_string = ','.join(columns)
+        sql_statement = f"SELECT {col_string} FROM ANNEAL_PERIOD \
                         WHERE ANNEALNUMBER = {anneal_num}"
         result = self.__execute(sql_statement)
-        return
+        return pd.DataFrame(result, columns=columns)
 
-    def query_anneal_darks(self, date=None, anneal_num=None, instrument='STIS', detector='CCD'):
+
+    def query_anneal_darks(self, date=None, anneal_num=None, instrument='STIS', detector='CCD', columns=['Darks','AnnealNumber']):
         """Return the list of dark names for a given anneal"""
         if (not date) and (not anneal_num):
             print("Please provide a date (format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) or an anneal number to retrieve pixel properties from.")
             return
         elif date and not anneal_num:
             anneal_num = date_to_anneal_num(date)
-        sql_statement = f"SELECT * FROM DARKS \
+        col_string = ','.join(columns)
+        sql_statement = f"SELECT {col_string} FROM DARKS \
                         WHERE ANNEALNUMBER = {anneal_num}"
+        
         result = self.__execute(sql_statement)
-        return
+        return pd.DataFrame(result, columns=columns)
+
 
     def load_pixel_mapping(self, csv_loc='.',csv_name='pixel_map.csv'):
         # Prepare Pixel File
