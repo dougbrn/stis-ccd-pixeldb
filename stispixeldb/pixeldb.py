@@ -53,7 +53,7 @@ class PixelDB:
         result = self.__execute(sql_statement)
         return pd.DataFrame(result, columns=columns)
 
-    def query_pixel_row_col(self,pixel_row1, pixel_row2, pixel_col1, pixel_col2, date=None,anneal_num=None, columns=['AnnealNumber','RowNum',
+    def query_pixel_region(self,pixel_row_range, pixel_col_range, date=None,anneal_num=None, columns=['AnnealNumber','RowNum',
                                                                                 'ColumnNum','Stability',
                                                                                 'Sci_Mean','Err_Mean',
                                                                                 'NaN_Count','Readnoise']):
@@ -64,6 +64,9 @@ class PixelDB:
         elif date and not anneal_num:
             anneal_num = date_to_anneal_num(date)
         col_string = ','.join(columns)
+
+        pixel_row1,pixel_row2 = pixel_row_range
+        pixel_col1,pixel_col2 = pixel_col_range
         sql_statement = f"SELECT {col_string} FROM HAS_PROPERTIES_IN \
                         WHERE ( RowNum BETWEEN ({pixel_row1}) AND ({pixel_row2}))\
                         AND (ColumnNum BETWEEN ({pixel_col1}) AND ({pixel_col2}))\
