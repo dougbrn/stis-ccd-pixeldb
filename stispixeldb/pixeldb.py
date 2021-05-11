@@ -27,7 +27,13 @@ class PixelDB:
         return result
 
     def custom_query(self,statement):
-        """execute a general sql query against the database"""
+        """Execute a general mysql query against the database. Maintains a list of prohibited commands to execute.
+        
+        Args: 
+            statement (str): The SQL string to execute against the database
+        Returns:
+            pandas.DataFrame: a dataframe of the results, may be empty if the query produces no output
+        """
         if statement in self.__prohibited:
             print("Cannot execute, statement prohibited.")
             return
@@ -39,7 +45,18 @@ class PixelDB:
                                                                                 'ColumnNum','Stability',
                                                                                 'Sci_Mean','Err_Mean',
                                                                                 'NaN_Count','Readnoise']):
-        """Return pixel properties for a given pixel and anneal combination"""
+        """Return pixel properties for a given pixel and anneal combination. Must specify one of date or anneal_number, if date is specified, will determine the correct anneal_number, if date and anneal_num are specified, the date will be ignored.
+        
+        Args:
+            pixel_row (int): The row index of the pixel to retreive
+            pixel_col (int): The column index of the pixel to retreive
+            date (:obj:,`str`, optional): Defaults to None, the date string in format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS
+            anneal_num (:obj:,`int`, optional): Defaults to None, the anneal number to query on
+            columns (:obj:,`list`, optional): Defaults to the full set of columns, can specify a limited subset to return just those columns
+
+        Returns:
+            pandas.DataFrame: a dataframe of the results, may be empty if the query produces no output
+        """
         if (not date) and (not anneal_num):
             print("Please provide a date (format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) or an anneal number to retrieve pixel properties from.")
             return
@@ -57,7 +74,18 @@ class PixelDB:
                                                                                 'ColumnNum','Stability',
                                                                                 'Sci_Mean','Err_Mean',
                                                                                 'NaN_Count','Readnoise']):
-        """Return pixel properties for a given pixel and anneal combination"""
+        """Return pixel properties for a given pixel and anneal combination.Must specify one of date or anneal_number, if date is specified, will determine the correct anneal_number, if date and anneal_num are specified, the date will be ignored.
+        
+        Args:
+            pixel_row_range (list or tuple): A tuple or list of the min and max values of the row range to query
+            pixel_col (list or tuple): A tuple or list of the min and max values of the column range to query
+            date (:obj:,`str`, optional): Defaults to None, the date string in format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS
+            anneal_num (:obj:,`int`, optional): Defaults to None, the anneal number to query on
+            columns (:obj:,`list`, optional): Defaults to the full set of columns, can specify a limited subset to return just those columns
+
+        Returns:
+            pandas.DataFrame: a dataframe of the results, may be empty if the query produces no output
+        """
         if (not date) and (not anneal_num):
             print("Please provide a date (format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) or an anneal number to retrieve pixel properties from.")
             return
@@ -77,7 +105,17 @@ class PixelDB:
 
     def query_anneal(self, date=None, anneal_num=None, instrument='STIS', detector='CCD', columns=['AnnealNumber', 'StartDate',
                                                                                                     'EndDate','NumberOfDarks']):
-        """Return anneal properties for a single anneal, probably want to handle querying for multiple anneals at once"""
+        """Return anneal properties for a single anneal. Must specify one of date or anneal_number, if date is specified, will determine the correct anneal_number, if date and anneal_num are specified, the date will be ignored.
+        
+        Args:
+            date (:obj:,`str`, optional): Defaults to None, the date string in format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS
+            anneal_num (:obj:,`int`, optional): Defaults to None, the anneal number to query on
+            instrument (:obj:,`str`, optional): Defaults to 'STIS', the instrument to query on
+            detector (:obj:,`str`, optional): Defaults to 'CCD', the instrument to query on
+            columns (:obj:,`list`, optional): Defaults to the full set of columns, can specify a limited subset to return just those columns
+        Returns:
+            pandas.DataFrame: a dataframe of the results, may be empty if the query produces no output
+        """
         if (not date) and (not anneal_num):
             print("Please provide a date (format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) or an anneal number to retrieve pixel properties from.")
             return
@@ -91,7 +129,17 @@ class PixelDB:
 
 
     def query_anneal_darks(self, date=None, anneal_num=None, instrument='STIS', detector='CCD', columns=['Darks','AnnealNumber']):
-        """Return the list of dark names for a given anneal"""
+        """Return the list of dark names for a given anneal. Must specify one of date or anneal_number, if date is specified, will determine the correct anneal_number, if date and anneal_num are specified, the date will be ignored.
+        
+        Args:
+            date (:obj:,`str`, optional): Defaults to None, the date string in format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS
+            anneal_num (:obj:,`int`, optional): Defaults to None, the anneal number to query on
+            instrument (:obj:,`str`, optional): Defaults to 'STIS', the instrument to query on
+            detector (:obj:,`str`, optional): Defaults to 'CCD', the instrument to query on
+            columns (:obj:,`list`, optional): Defaults to the full set of columns, can specify a limited subset to return just those columns
+        Returns:
+            pandas.DataFrame: a dataframe of the results, may be empty if the query produces no output
+        """
         if (not date) and (not anneal_num):
             print("Please provide a date (format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) or an anneal number to retrieve pixel properties from.")
             return
@@ -106,6 +154,14 @@ class PixelDB:
 
 
     def load_pixel_mapping(self, csv_loc='.',csv_name='pixel_map.csv'):
+        """Load the mapping of pixel entities into the database based on a mapping csv file.For the STIS CCD, this file is generated by the `create_pix_csv.py` script.
+
+        Args:
+            csv_loc (:obj:,`str`, optional): Defaults to '.' (current directory), the location of the mapping csv file
+            csv_name (:obj:,`str`, optional): Defaults to 'pixel_map.csv', the name of the csv file
+        Returns:
+            None
+        """
         # Prepare Pixel File
         pix_path = os.path.join(csv_loc,csv_name)
         try:
@@ -123,7 +179,14 @@ class PixelDB:
 
 
     def check_for_anneals(self, exclude=[]):
-        """Returns a list of anneals not contained in the pixel database"""
+        """Checks the anneals stored in the database against the list of available anneals.
+        
+        Args:
+            exclude (:obj:,`list`, optional): Defaults to an empty list. A list of anneal numbers to ignore for comparison, useful as we don't consider the first ~28 anneals for analysis.
+
+        Returns:
+            list: Returns a list of anneals not contained in the pixel database
+        """
 
         # Read in the tabulated set of available anneals
         anneal_df = get_anneals()
@@ -139,7 +202,15 @@ class PixelDB:
 
 
     def insert_anneal(self, anneal_num, csv_loc = '.'):
-        """Loads anneals and their corresponding pixels and darks into the database"""
+        """Loads an anneal and it's corresponding pixel properties and darks into the database. Loads pixel properties based on an accompanying anneal_{anneal_num}.csv file.
+        
+        Args:
+            anneal_num (int): The number of the anneal to populate, determines the filename to search for as anneal_{anneal_num}.csv
+            csv_loc (:obj:,'str', optional): Defaults to '.' (current directory), the location of the pixel property csv file
+
+        Returns
+            None
+        """
         anneal_df = get_anneals() # Load in the list of available anneals
         anneal = anneal_df.loc[anneal_df['number']==anneal_num]
         if len(anneal) == 0:
