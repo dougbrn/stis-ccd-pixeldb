@@ -14259,7 +14259,12 @@ a.anchor-link {
 
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Database-Administrator-Guide">Database Administrator Guide<a class="anchor-link" href="#Database-Administrator-Guide">&#182;</a></h1>
+<h1 id="Database-Administrator-Guide">Database Administrator Guide<a class="anchor-link" href="#Database-Administrator-Guide">&#182;</a></h1><h2 id="Table-of-Contents:">Table of Contents:<a class="anchor-link" href="#Table-of-Contents:">&#182;</a></h2><ul>
+<li><a href="#schema">Schema and ERD</a></li>
+<li><a href="#db">Database Table and Properties</a></li>
+<li><a href="#python">Python API Functions</a></li>
+</ul>
+
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
@@ -14288,7 +14293,7 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Schema-and-ERD">Schema and ERD<a class="anchor-link" href="#Schema-and-ERD">&#182;</a></h2>
+<h2 id="Schema-and-ERD-">Schema and ERD <a class="anchor" id="schema" /><a class="anchor-link" href="#Schema-and-ERD-">&#182;</a></h2>
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
@@ -14381,7 +14386,7 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Database-Tables-and-Properties">Database Tables and Properties<a class="anchor-link" href="#Database-Tables-and-Properties">&#182;</a></h2>
+<h2 id="Database-Tables-and-Properties-">Database Tables and Properties <a class="anchor" id="db" /><a class="anchor-link" href="#Database-Tables-and-Properties-">&#182;</a></h2>
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
@@ -14634,6 +14639,454 @@ pixel
 
 </div>
 
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Python-API-Functions-">Python API Functions <a class="anchor" id="python" /><a class="anchor-link" href="#Python-API-Functions-">&#182;</a></h2><ul>
+<li><a href="#custom_query">pixeldb.PixelDB.custom_query</a></li>
+<li><a href="#query_pixel">pixeldb.PixelDB.query_pixel</a></li>
+<li><a href="#query_pixel_region">pixeldb.PixelDB.query_pixel_region</a></li>
+<li><a href="#query_anneal">pixeldb.PixelDB.query_anneal</a></li>
+<li><a href="#query_anneal_darks">pixeldb.PixelDB.query_anneal_darks</a></li>
+<li><a href="#load_pixel_mapping">pixeldb.PixelDB.load_pixel_mapping</a></li>
+<li><a href="#check_for_anneals">pixeldb.PixelDB.check_for_anneals</a></li>
+<li><a href="#insert_anneal">pixeldb.PixelDB.insert_anneal</a></li>
+</ul>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">stispixeldb</span> <span class="kn">import</span> <span class="n">pixeldb</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Create a connection object</span>
+<span class="n">pixdb</span> <span class="o">=</span> <span class="n">pixeldb</span><span class="o">.</span><span class="n">PixelDB</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span><span class="n">user</span><span class="o">=</span><span class="s1">&#39;your_username&#39;</span><span class="p">,</span><span class="n">password</span><span class="o">=</span><span class="s1">&#39;your_password&#39;</span><span class="p">,</span><span class="n">database</span><span class="o">=</span><span class="s1">&#39;anneals_pixels&#39;</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="pixeldb.PixelDB.custom_query-">pixeldb.PixelDB.custom_query <a class="anchor" id="custom_query" /><a class="anchor-link" href="#pixeldb.PixelDB.custom_query-">&#182;</a></h3>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pixdb</span><span class="o">.</span><span class="n">custom_query</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Execute a general mysql query against the database. Maintains a list of prohibited commands to execute.
+        
+        Args: 
+            statement (str): The SQL string to execute against the database
+        Returns:
+            pandas.DataFrame: a dataframe of the results, may be empty if the query produces no output
+        
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="pixeldb.PixelDB.query_pixel-">pixeldb.PixelDB.query_pixel <a class="anchor" id="query_pixel" /><a class="anchor-link" href="#pixeldb.PixelDB.query_pixel-">&#182;</a></h3>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pixdb</span><span class="o">.</span><span class="n">query_pixel</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Return pixel properties for a given pixel and anneal combination. Must specify one of date or anneal_number, if date is specified, will determine the correct anneal_number, if date and anneal_num are specified, the date will be ignored.
+        
+        Args:
+            pixel_row (int): The row index of the pixel to retreive
+            pixel_col (int): The column index of the pixel to retreive
+            date (:obj:,`str`, optional): Defaults to None, the date string in format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS
+            anneal_num (:obj:,`int`, optional): Defaults to None, the anneal number to query on
+            columns (:obj:,`list`, optional): Defaults to the full set of columns, can specify a limited subset to return just those columns
+
+        Returns:
+            pandas.DataFrame: a dataframe of the results, may be empty if the query produces no output
+        
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="pixeldb.PixelDB.query_pixel_region-">pixeldb.PixelDB.query_pixel_region <a class="anchor" id="query_pixel_region" /><a class="anchor-link" href="#pixeldb.PixelDB.query_pixel_region-">&#182;</a></h3>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pixdb</span><span class="o">.</span><span class="n">query_pixel_region</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Return pixel properties for a given pixel and anneal combination.Must specify one of date or anneal_number, if date is specified, will determine the correct anneal_number, if date and anneal_num are specified, the date will be ignored.
+        
+        Args:
+            pixel_row_range (list or tuple): A tuple or list of the min and max values of the row range to query
+            pixel_col (list or tuple): A tuple or list of the min and max values of the column range to query
+            date (:obj:,`str`, optional): Defaults to None, the date string in format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS
+            anneal_num (:obj:,`int`, optional): Defaults to None, the anneal number to query on
+            columns (:obj:,`list`, optional): Defaults to the full set of columns, can specify a limited subset to return just those columns
+
+        Returns:
+            pandas.DataFrame: a dataframe of the results, may be empty if the query produces no output
+        
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="pixeldb.PixelDB.query_anneal-">pixeldb.PixelDB.query_anneal <a class="anchor" id="query_anneal" /><a class="anchor-link" href="#pixeldb.PixelDB.query_anneal-">&#182;</a></h3>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pixdb</span><span class="o">.</span><span class="n">query_anneal</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Return anneal properties for a single anneal. Must specify one of date or anneal_number, if date is specified, will determine the correct anneal_number, if date and anneal_num are specified, the date will be ignored.
+        
+        Args:
+            date (:obj:,`str`, optional): Defaults to None, the date string in format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS
+            anneal_num (:obj:,`int`, optional): Defaults to None, the anneal number to query on
+            instrument (:obj:,`str`, optional): Defaults to &#39;STIS&#39;, the instrument to query on
+            detector (:obj:,`str`, optional): Defaults to &#39;CCD&#39;, the instrument to query on
+            columns (:obj:,`list`, optional): Defaults to the full set of columns, can specify a limited subset to return just those columns
+        Returns:
+            pandas.DataFrame: a dataframe of the results, may be empty if the query produces no output
+        
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="pixeldb.PixelDB.query_anneal_darks-">pixeldb.PixelDB.query_anneal_darks <a class="anchor" id="query_anneal_darks" /><a class="anchor-link" href="#pixeldb.PixelDB.query_anneal_darks-">&#182;</a></h3>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pixdb</span><span class="o">.</span><span class="n">query_anneal_darks</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Return the list of dark names for a given anneal. Must specify one of date or anneal_number, if date is specified, will determine the correct anneal_number, if date and anneal_num are specified, the date will be ignored.
+        
+        Args:
+            date (:obj:,`str`, optional): Defaults to None, the date string in format YYYY-MM-DD or YYYY-MM-DD HH:MM:SS
+            anneal_num (:obj:,`int`, optional): Defaults to None, the anneal number to query on
+            instrument (:obj:,`str`, optional): Defaults to &#39;STIS&#39;, the instrument to query on
+            detector (:obj:,`str`, optional): Defaults to &#39;CCD&#39;, the instrument to query on
+            columns (:obj:,`list`, optional): Defaults to the full set of columns, can specify a limited subset to return just those columns
+        Returns:
+            pandas.DataFrame: a dataframe of the results, may be empty if the query produces no output
+        
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="pixeldb.PixelDB.load_pixel_mapping-">pixeldb.PixelDB.load_pixel_mapping <a class="anchor" id="load_pixel_mapping" /><a class="anchor-link" href="#pixeldb.PixelDB.load_pixel_mapping-">&#182;</a></h3>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pixdb</span><span class="o">.</span><span class="n">load_pixel_mapping</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Load the mapping of pixel entities into the database based on a mapping csv file.For the STIS CCD, this file is generated by the `create_pix_csv.py` script.
+
+        Args:
+            csv_loc (:obj:,`str`, optional): Defaults to &#39;.&#39; (current directory), the location of the mapping csv file
+            csv_name (:obj:,`str`, optional): Defaults to &#39;pixel_map.csv&#39;, the name of the csv file
+        Returns:
+            None
+        
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="pixeldb.PixelDB.check_for_anneals-">pixeldb.PixelDB.check_for_anneals <a class="anchor" id="check_for_anneals" /><a class="anchor-link" href="#pixeldb.PixelDB.check_for_anneals-">&#182;</a></h3>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pixdb</span><span class="o">.</span><span class="n">check_for_anneals</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Checks the anneals stored in the database against the list of available anneals.
+        
+        Args:
+            exclude (:obj:,`list`, optional): Defaults to an empty list. A list of anneal numbers to ignore for comparison, useful as we don&#39;t consider the first ~28 anneals for analysis.
+
+        Returns:
+            list: Returns a list of anneals not contained in the pixel database
+        
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="pixeldb.PixelDB.insert_anneal-">pixeldb.PixelDB.insert_anneal <a class="anchor" id="insert_anneal" /><a class="anchor-link" href="#pixeldb.PixelDB.insert_anneal-">&#182;</a></h3>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pixdb</span><span class="o">.</span><span class="n">insert_anneal</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Loads an anneal and it&#39;s corresponding pixel properties and darks into the database. Loads pixel properties based on an accompanying anneal_{anneal_num}.csv file.
+        
+        Args:
+            anneal_num (int): The number of the anneal to populate, determines the filename to search for as anneal_{anneal_num}.csv
+            csv_loc (:obj:,&#39;str&#39;, optional): Defaults to &#39;.&#39; (current directory), the location of the pixel property csv file
+
+        Returns
+            None
+        
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+     </div>
+</div>
+</div>
 </div>
 
 </div>
